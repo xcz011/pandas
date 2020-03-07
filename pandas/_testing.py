@@ -706,11 +706,11 @@ def assert_index_equal(
     if isinstance(left, pd.PeriodIndex) or isinstance(right, pd.PeriodIndex):
         assert_attr_equal("freq", left, right, obj=obj)
     if isinstance(left, pd.IntervalIndex) or isinstance(right, pd.IntervalIndex):
-        assert_interval_array_equal(left._values, right._values)
+        assert_interval_array_equal(left.values, right.values)
 
     if check_categorical:
         if is_categorical_dtype(left) or is_categorical_dtype(right):
-            assert_categorical_equal(left._values, right._values, obj=f"{obj} category")
+            assert_categorical_equal(left.values, right.values, obj=f"{obj} category")
 
 
 def assert_class_equal(left, right, exact: Union[bool, str] = True, obj="Input"):
@@ -883,7 +883,7 @@ def assert_interval_array_equal(left, right, exact="equiv", obj="IntervalArray")
 def assert_period_array_equal(left, right, obj="PeriodArray"):
     _check_isinstance(left, right, PeriodArray)
 
-    assert_numpy_array_equal(left._data, right._data, obj=f"{obj}._data")
+    assert_numpy_array_equal(left._data, right._data, obj=f"{obj}.values")
     assert_attr_equal("freq", left, right, obj=obj)
 
 
@@ -1170,10 +1170,10 @@ def assert_series_equal(
 
             # datetimelike may have different objects (e.g. datetime.datetime
             # vs Timestamp) but will compare equal
-            if not Index(left._values).equals(Index(right._values)):
+            if not Index(left.values).equals(Index(right.values)):
                 msg = (
-                    f"[datetimelike_compat=True] {left._values} "
-                    f"is not equal to {right._values}."
+                    f"[datetimelike_compat=True] {left.values} "
+                    f"is not equal to {right.values}."
                 )
                 raise AssertionError(msg)
         else:
@@ -1212,8 +1212,8 @@ def assert_series_equal(
     if check_categorical:
         if is_categorical_dtype(left) or is_categorical_dtype(right):
             assert_categorical_equal(
-                left._values,
-                right._values,
+                left.values,
+                right.values,
                 obj=f"{obj} category",
                 check_category_order=check_category_order,
             )
@@ -2125,7 +2125,7 @@ def makeMissingCustomDataframe(
     Density : float, optional
         Float in (0, 1) that gives the percentage of non-missing numbers in
         the DataFrame.
-    random_state : {np.random.RandomState, int}, optional
+    random_state : {np.random.RandomState, int, integer array like}, optional
         Random number generator or random seed.
 
     See makeCustomDataframe for descriptions of the rest of the parameters.
